@@ -2,14 +2,14 @@
 # Docker Hub https://registry.hub.docker.com/_/debian/
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: debian
+box: takahidehamano/mynginx
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
 # services:
     # - postgres
     # http://devcenter.wercker.com/docs/services/postgresql.html
 
-    # - mongo
+    # - mongodb
     # http://devcenter.wercker.com/docs/services/mongodb.html
 
 # This is the build pipeline. Pipelines are the core of wercker
@@ -21,6 +21,18 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
-        name: echo
+        name: echo start
         code: |
-          echo "hello world!"
+          echo "#################################"
+          echo "blog build start"
+          echo "#################################"
+    - script:
+        name: check
+        code: |
+          redpen -c ./redpen-conf-ja.xml -f markdown ./**/*.md
+    - script:
+        name: echo end
+        code: |
+          echo "#################################"
+          echo "blog build end"
+          echo "#################################"
