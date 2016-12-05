@@ -29,7 +29,7 @@ build:
     - script:
         name: check
         code: |
-          redpen -c ./redpen-conf-ja.xml -f markdown ./**/*.md
+          redpen -c ./redpen-conf-ja.xml -f markdown sample.md
     - script:
         name: echo end
         code: |
