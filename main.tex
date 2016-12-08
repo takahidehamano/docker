@@ -1,0 +1,607 @@
+\title{ボットを活用するプロジェクトマネジメントツールの提案}
+\author{プロジェクトマネジメントコース\\
+ソフトウェア開発管理グループ\\
+矢吹研究室\\
+1342097\\
+浜野　太豪}
+\date{}
+\begin{document}
+\maketitle
+
+%本テンプレートの余白は，卒論マニュアルで指示されたものとは違っているが，1ページあたりの文字数は40文字x40行と，卒論マニュアル通りになっている。文字間隔や行間隔を調整して，余白をマニュアル通りにすることもできるが，それでは文章が読みにくくなるため，このような対応をしている。
+
+%\input{charcounter}%文字数チェック用
+
+\chapter*{謝辞}
+
+本研究を進めるにあたり，矢吹研究室矢吹太朗准教授には，多くの時間をご指導にさいて頂きました．
+また矢吹研究室の皆様には，多くの知識や示唆を頂きました．協力していただい皆様に感謝の気持ちと御礼を申し上げます．
+
+\tableofcontents%目次
+
+
+\chapter{序論}
+本研究の目的はChatサービスSlackにおけるChatボットの開発である．Chatボットとは人間の代わりにチャットを行うプログラムのことである．
+Chatボットを用いSlack上でプロジェクトに関する操作を行うことにより，操作の可視化とチームメンバーに対して情報の共有を行うことができると考えたため研究とChatボット開発を行う．
+
+\chapter{背景}
+クラウドの普及により様々なサービス（アプリケーション）が提供されるようになった．このようなクラウド上で提供されるサービスをSaaS（Software as a Service）と呼ぶ．利用者は自分のパソコンにソフトウェアをインストールすることなくインターネットを介して利用することができる\cite{saas}．近年では特定の機能に特化したSaaSの提供が増えている．システム運用の現場では監視ツールやコードレビューツールやインシデント管理ツールなどのSaaSを用いる．このようなSaaS同士を連携し，作業を自動化することで作業全体を効率化するという使い方がシステム運用の現場では一般化しつつある．しかしこのようなツールを連携するには多くのコストや手間がかかってしまう．
+
+2013年に登場したSlackはこの問題を解決することが期待されている．なぜなら他のサービスと連携が容易な構造になっているため\cite{slack}前述したシステム運用ツール（SaaS)の連携時の手間やコストを解決することができるからである．そのためさまざまなSaaS連携の取り組みが実施されている．特にChatサービスとシステム運用に関するツールとの親和性が高いため，システム運用のツールとChatサービスを組み合わせてシステム運用の効率化を図る「ChatOps」が盛り上がりをみせている．
+
+さらにChatOpsの盛り上がりに伴い，Chatボットの作成が簡単にできるOSSフレームワークFacebookのMessenger PlatformやMicrosoftの bot framework，Slackのbotkitなどが2016年に登場した．今後はChatサービスとSaaSとChatボットという組み合わせによって，更なる作業効率化が期待される．
+
+
+
+
+
+
+\chapter{目的}
+コミュニケーションツールSlackを利用してChatOpsを実現する．システム開発における複雑な開発環境をSlackに統合する．統合することによって情報の共有，操作の可視化を行う．
+
+
+\chapter{利用するサービスの解説}
+本研究ではSlackとGithub(SaaS），Chatボットを連携したChatOpsの実装を行う．そのため研究を行うための利用するサービスについて解説する．
+
+\section{Slack}
+Slackは，Slack Technologies，Inc．が提供するコミュニケーションツールである．大きな特徴としてサービスとの連携や洗練されたUI(User Interface），充実した検索機能があげられる．
+
+\section{Github}
+
+GitHubは2008年オープンした，Gitのリモートリポジトリと，さまざまなWebツールを提供するサービスである．Gitは2005年に開発された分散バージョン管理システムのことである．オープンソースソフトウェアは，時間的にも地理的にも離れたところに住む複数のプログラマによって開発される．GitHubでは相談して課題を解決するIssue(イシュー)や改善案を気軽に提案できるPull Request(プルリクエスト)などの機能が，注目を集めています．
+　GitHubのさまざまな機能を一部抜粋して，説明を記述する．
+
+
+\subsection{リポジトリ}
+
+ファイルやディレクトリの状態を記録する場所．
+
+\subsection{リモートリポジトリ}
+
+手元に置いてあるローカルなリポジトリ以外の，ネット上に置かれたリポジトリのこと．
+
+\subsection{commit}
+
+ファイルやディレクトリの変更をリポジトリに記録する機能である．
+
+
+\subsection{clone}
+
+ネット上にあるリポジトリをローカルにコピーする機能である．
+
+
+\subsection{Origin}
+
+clone元のリモートリポジトリのこと．
+
+
+\subsection{Push}
+
+リモートリポジトリに自分の変更履歴がアップロードされ，リモートリポジトリ内の変更履歴がローカルリポジトリの変更履歴と同じ状態にする機能である．
+
+
+\subsection{branch}
+
+履歴の流れを分岐して記録していくためのもの．分岐したブランチは，他のブランチの影響を受けないため，同じリポジトリ中で複数の変更を同時に進めていける機能である．
+
+
+\subsection{pull}
+
+リモートリポジトリから最新の変更履歴をダウンロードしてきて，自分のローカルリポジトリにその内容を取り込む機能である．
+
+
+\subsection{Pull Request}
+
+相手に対して自分の変更ををpullしてもらうように要求する機能である．
+
+
+\subsection{Revert}
+
+ステージングエリアに追加した変更を取り消す機能である．
+
+\subsection{タグ}
+
+コミットを参照しやすくするために，わかりやすい名前を付ける機能である．
+
+
+\subsection{Label}
+
+自由に作成でき，Issueをフィルタリングできる機能である．
+
+
+\subsection{Merge}
+
+当該ブランチに対して別のブランチの差分を取り込むことである．
+
+
+\subsection{Fork}
+
+GitHubのサービスで，相手のリポジトリを自分のリポジトリとしてコピー・保持できる機能ある．
+
+
+\subsection{Issue}
+
+ソフトウェア開発におけるバグや議論などをトラッキングして管理するために発行する．
+
+\subsection{デプロイ}
+
+ソフトウェアの分野で，開発したソフトウェアを利用できるように実際の運用環境に展開する．
+
+
+\subsection{リリース}
+
+プロセスを次の段階に進めることを認める機能である．
+
+
+\subsection{Watch}
+
+リポジトリに関する情報をNotificationsに表示する機能である．
+
+\subsection{Star}
+
+リスト一覧からリポジトリを探すことが出来るようにする機能である．
+また，注目度を表す指標にもなる．
+
+\subsection{Fork}
+
+GitHub側にある特定のリポジトリを自分のアカウント以下のリポジトリに複製する機能である．
+
+\subsection{人数}
+開発人数のことである．
+ここでは，Originリポジトリにコミットした人数のことを示す．
+
+\subsection{MileStone}
+
+やるべきタスクの管理にIssueを用いることができるようにする機能である．
+
+\subsection{Wiki}
+
+簡単な記法によってドキュメントを作成，編集するための機能である．
+
+
+\section{botkit}
+botkitはHowdy社が開発し公開しているNode.jsでbotを作り動かすためのチャットボット開発フレームワークである．
+
+
+
+
+\chapter{開発環境構築ツールの解説}
+
+\section{Chocolatey}
+「Chocolatey」は，コマンドラインによるアプリケーションの導入や削除を実現するパッケージ管理システム．パッケージ管理システムとは，アプリケーションやコンポーネント，ライブラリなどの管理を円滑に行うための仕組み．アプリケーションやライブラリを構成するファイル群を１つの”パッケージ”ファイルにまとめ，それを”リポジトリ”へ保管し，コマンドで取得・セットアップを行う．動作に必要な外部コンポーネントがあれば，その導入も自動で行われるのが一般的で，アプリケーションのインストールやアンインストールの手間を省くことができる．
+
+Linuxディストリビューションの多くは”apt-get”や”yum”といったパッケージ管理のためのコマンドを備えており，コマンドを入力するだけで手軽にソフトをダウンロード・インストール・アンインストールできて非常に便利．「Chocolatey」はこれをWindows環境で実現しようというものである．
+
+
+
+\subsection{パッケージとは}
+ソフトウェアにかかわるファイル一式がまとまったものをパッケージという．「ソフトウェアにかかわるファイル」には，設定ファイルやドキュメント，プログラム本体，プログラムが動くために必要なライブラリなどが含まれます．
+
+\subsection{choco list [packageName]}
+ パッケージ検索．引数がなければすべてのパッケージを表示．
+\subsection{choco list -lo [packageName] }
+インストール済みのパッケージ検索．引数がなければすべてのインストール済みパッケージを表示．
+\subsection{cinst [packageName]}
+ 指定パッケージのインストール．
+\subsection{cuninst [packageName]}
+ 指定パッケージのアンインストール．
+\subsection{cup}
+ Chocolatey本体のアップデート．
+\subsection{cup [packageName]}
+ 指定パッケージのアップデート．
+\subsection{cup all}
+ インストール済みのパッケージを全てアップデート．
+
+
+
+\section{Oracle VM VirtualBox}
+Oracle VM VirtualBox（以下，VirtualBoxと表記する）は，使用しているPCマシン上に仮想的なマシンを作成し，別のOSをインストール・実行することができるオープンソースソフトウェアである．WindowsやMac OS X，Linux等，様々なOSで利用することができる
+本研究で利用するVirtualBoxの用語について説明する．
+\subsection{ホストPC}
+VirtualBoxをインストールしたPCのこと．
+
+\subsection{ホストOS}
+VirtualBoxをインストールしたPCのOSのこと．本研究で使用するホストPCのOSはWindows 7/8.1である． 
+
+\subsection{ゲストPC（仮想マシン）}
+VirtualBoxで作成した仮想PC
+
+\subsection{ゲストOS}
+VirtualBoxで作成した仮想PCにインストールしたOSのこと．今回のボット開発環境構築ではcentos7.1を使用する．
+\cite{vb}
+
+\section{vagrant}
+Vagrantは，開発環境の構築と共有を簡単に行うためのツールです．どこでも同じ環境を再現できるように仮想マシン環境を管理する機能と，Atlasを通して共有する仕組みが提供されている．\cite{vagrant}
+\subsection{vagrantとAtlas}
+Vagrantは、アプリケーションやシステム開発のバックエンドを簡単にパッケージ化し，共有するためのツールです．このパッケージ化された環境を，「box」と呼ばれる単位で管理することができる．またboxを共有するための機能としてAtlasという名前のインターネット上のサービスが提供されている．
+\begin{figure}[htb]
+\centering
+\includegraphics[width=13cm]{atlas.jpg}
+\caption{VagrantとAtlasの関係}
+\end{figure}
+\newpage
+
+\section{WinSCP}
+WinSCPとは，Windows上で動くFTP，FTPS，SFTPクライアントプログラムである．サーバー上のファイルをWindowsのエクスプローラライクに操作することができる．本研究では，このWinSCPを設定して仮想マシン上のファイルを直接エディターで編集する．
+
+
+
+
+
+
+
+
+
+
+\chapter{開発環境の導入}
+\section{Chocolateyインストール}
+「Chocolatey」をインストールするためには、管理者権限でコマンドプロンプトを起動する必要がある．Windows 10の場合，「スタート」ボタンを右クリックして，「コマンドプロンプト（管理者）」をクリックする．
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=15cm]{desktop.png}
+\caption{管理者権限}\label{tab:desktop}
+\end{figure}
+
+
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=13cm]{uac.png}
+\caption{UAC}\label{tab:uac}
+\end{figure}
+\newpage
+
+UAC（User Account Control）が有効になっている場合は，コマンドプロンプトを管理者権限で実行して良いかどうかプロンプトが表示されるため，「はい」をクリックする．
+
+
+
+「Chocolatey」をインストールするために、コマンドプロンプトで、以下のコマンドを実行する．
+
+\begin{verbatim}
+
+@powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.We
+bClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLU
+SERSPROFILE%\chocolatey\bin"
+
+\end{verbatim}
+
+\newpage
+
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=11cm]{choco2.png}
+\caption{chocoインストール}\label{tab:uac}
+\end{figure}
+
+
+インストール方法は，今後変更される可能性がある．そのため，以下のコマンドが正常に動作しない場合は，Chocolatey Galleryから最新の情報を確認してください．
+
+
+\subsection{パッケージのインストール}
+「VirtualBox」と「vagrant」，「WinSCP」をChocolateyを使って，コマンドプロンプトからインストールする．
+「VirtualBox」と「vagrant」，「WinSCP」をインストールするために，コマンドプロンプトで，以下のコマンドを実行する．
+
+\begin{verbatim}
+
+cinst vagrant virtualbox winscp
+
+\end{verbatim}
+
+\section{Vagrantによる仮想マシン構築}
+
+コマンドプロンプトから以下のコマンドを入力する．
+\begin{verbatim}
+vagrantの作業フォルダを作成する．
+
+mkdir vagrant
+cd vagrant
+mkdir centos
+cd centos
+
+
+vagrantの設定ファイルを作成する
+
+vagrant init bento/centos-7.1
+
+vagrantから仮想マシンの起動を行う．
+
+vagrant up
+
+仮想マシンに接続する．
+
+vagrant ssh
+
+\end{verbatim}
+
+
+
+
+\section{ボット開発OSS「botkit」の導入}
+botkitを導入するため，下記のコマンドを実行する．
+\begin{verbatim}
+リポジトリの追加
+sudo yum install -y epel-release
+node.js，npmインストール
+sudo yum -y install nodejs npm --enablerepo=epel
+botkitのインストール
+mkdir slack-gh-issue
+cd slack-gh-issue
+npm install --save botkit
+\end{verbatim}
+
+\section{ボット開発手順}
+\subsection{slack側の設定}
+\begin{verbatim}
+下記のページでbotの名前を指定し，botを作成し，API Tokenを取得しておく．
+https://my.slack.com/services/new/bot
+\end{verbatim}
+
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=13cm]{bot1.png}
+\caption{index.jsファイル作成}\label{tab:winscp}
+\end{figure}
+
+\newpage
+
+chocoletyでインストールしたWinSCPを起動する
+\begin{verbatim}
+ログイン画面に
+ホスト名	127.0.0.1
+ポート番号	2222
+ユーザー名	vagrant
+パスワード	vagrant
+で起動する．
+\end{verbatim}
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=13cm]{winscp.png}
+\caption{WinSCPログイン}\label{tab:winscp}
+\end{figure}
+
+
+winSCPを起動することができたら，/home/vagrant/slack-gh-issueディレクトリに移動し，index.jsというファイルを作成し，次頁のコードを入力して保存する．
+\newpage
+
+\begin{verbatim}
+
+var Botkit = require('botkit');
+
+var controller = Botkit.slackbot({
+    debug: false
+});
+
+controller.spawn({
+    token: 'slack側の設定で取得したAPI Tokenを貼り付ける'
+}).startRTM()
+
+// say hi
+controller.hears('hi',['direct_message','direct_mention','mention'],function(bot,message) {
+    bot.reply(message,'hi');
+});
+\newpage
+下記のコマンドで起動する．
+node index.js
+
+\end{verbatim}
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=13cm]{index3.png}
+\caption{botの起動}\label{tab:botの起動}
+\end{figure}
+
+
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=13cm]{slack2.png}
+\caption{botの起動}\label{tab:botの起動}
+\end{figure}
+\newpage
+botの起動を確認．
+基本的な開発手順は以上である．
+
+
+
+
+\chapter{結果}
+本研究のプログラムを下記に示す．
+
+\begin{verbatim}
+const Botkit = require("botkit");
+
+const settings =  require("./data/settings.json");
+//JSON.parse(process.env.ISSUE_BOT_SETTINGS) ||
+const dictionary = require("./data/dictionary.json");
+
+const gh = require("./module/github-controller")(settings.repository);
+const sl = require("./module/slack-controller")("");
+sl.setAuthData(settings.token.slack.token);
+gh.setAuthData(settings.token.github);
+
+let users = false;
+
+Promise.resolve()
+.then( () => {
+	return sl.getUsersList();
+})
+.then( (data) => {
+	users = data;
+})
+.catch( (err) => {
+	console.log("userList Get Error:" + err);
+});
+
+const bot = Botkit.slackbot({
+	debug: false
+});
+
+bot.spawn(settings.token.slack).startRTM();
+
+bot.hears("(Create Issue)",["direct_message","direct_mention","mention"], (bot, message) => {
+	let elements = message.text.split("\n");
+	let createUser = users.filter( (user) => {
+		return user.id == message.user;
+	}) || {name:"Unknown"};
+
+	let title = createUser[0].name + ": " + elements[1];
+	let body = elements.filter( (row, index) => {return index >= 2;}).join("\n");
+
+	bot.reply(
+		message,
+		dictionary[settings.lang]["Processing"].replace(/{title}/, title)
+	);
+
+	Promise.resolve()
+	.then( () => {
+		return gh.createIssue(title, body);
+	})
+	.then( (data) => {
+		bot.reply(
+			message,
+			dictionary[settings.lang]["Success"].replace(/{title}/, title).replace(/{url}/, data.body.html_url)
+		);
+		console.log(data);
+	})
+	.catch( (err) => {
+		bot.reply(
+			message,
+			dictionary[settings.lang]["Error"].replace(/{error}/, err)
+		);
+		console.log(err);
+	});
+});
+
+\end{verbatim}
+\begin{verbatim}
+const githubController = function(params) {
+	this.request = require("request");
+	this.auth = {};
+	this.options = {
+		url: "https://api.github.com/repos/" + params + "/issues",
+		method: "POST",
+		json: true,
+		headers: {
+			"Content-Type":"application/json",
+			"User-Agent": "BK-Slack-to-Issues"
+		},
+	};
+
+	this.show = () => {
+		console.log(this.options);
+	};
+
+	this.setAuthData = (data) => {
+		this.auth = data;
+	};
+
+	this.createIssue = (title, description) => {
+		return new Promise( (resolve, reject) => {
+			this.options.auth = this.auth;
+			this.options.form = JSON.stringify({
+				title: title,
+				body: description
+			});
+
+			this.request(this.options, (err, res)=>{
+				if(err) reject(err);
+				if([200, 201].indexOf(res.statusCode) == -1) reject(res.statusCode);
+				return resolve(res);
+			});
+		});
+	};
+};
+
+module.exports = params => {return new githubController(params);};
+
+\end{verbatim}
+
+\begin{verbatim}
+const slackController = function() {
+	this.token = "";
+	this.baseUrl = "https://slack.com/api/";
+	this.endpoint = "";
+	this.request = require("request");
+
+	this.setAuthData = (token) => {
+		this.token = token;
+	};
+
+	this.makeUri = () => {
+		return this.baseUrl + this.endpoint + "?token=" + this.token + "&pretty=1";
+	};
+
+	this.getChannelsList = () => {
+		return new Promise( (resolve, reject) => {
+			this.endpoint = "channels.list";
+			this.request(this.makeUri(), (err, res, body) => {
+				if(err) reject(err);
+				if([200, 201].indexOf(res.statusCode) == -1) reject(res.statusCode);
+
+				resolve(JSON.parse(body).channels);
+			});
+		});
+	};
+
+	this.getUsersList = () => {
+		return new Promise( (resolve, reject) => {
+			this.endpoint = "users.list";
+			this.request(this.makeUri(), (err, res, body) => {
+				if(err) reject(err);
+				if([200, 201].indexOf(res.statusCode) == -1) reject(res.statusCode);
+
+				resolve(JSON.parse(body).members);
+			});
+		});
+	};
+};
+
+module.exports = () => {return new slackController();};
+
+\end{verbatim}
+
+
+\begin{verbatim}
+{
+	"lang": "en",
+	"token": {
+		"slack": {
+			"token": "token get from https://api.slack.com/web"
+		},
+
+		"github": {
+			"user": "yourName",
+			"password": "token get from https://github.com/settings/tokens"
+		}
+	},
+	"repository": "yourName/RepoName"
+}
+
+\end{verbatim}
+出力結果を以下に示す．
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=13cm]{slack.png}
+\caption{コマンド入力}\label{tab:botの起動}
+\end{figure}
+\begin{figure}[htb]
+\centering　
+\includegraphics[width=13cm]{slack3.png}
+\caption{Issue出力}\label{tab:botの起動}
+\end{figure}
+
+
+\chapter{考察}
+
+\chapter{結論}
+
+
+
+
+
+
+
+\bibliographystyle{junsrt}
+\bibliography{biblio}%「biblio.bib」というファイルが必要．
+
+
+
+\end{document}
