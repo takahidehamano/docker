@@ -29,7 +29,7 @@ build:
     - script:
         name: check
         code: |
-          redpen -c ./redpen-conf-ja.xml -f LaTeX -r xml draft.tex
+          redpen -c ./redpen-conf-ja.xml -f latex  draft.tex
     - script:
         name: echo end
         code: |
