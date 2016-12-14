@@ -6,10 +6,10 @@
         <validator name="CommaNumber" />
 
         <validator name="SuccessiveWord" />
-        <validator name="KatakanaEndHyphen" />
-        <validator name="KatakanaSpellCheck" />
-        <validator name="InvalidExpression" />
-        <validator name="JapaneseStyle" />
+        <validator name="KatakanaEndHyphen"/>
+        <validator name="KatakanaSpellCheck"/>
+        <validator name="InvalidExpression"/>
+        <validator name="JapaneseStyle"/>
         <validator name="DoubleNegative" />
         <validator name="FrequentSentenceStart" />
         <validator name="JapaneseAmbiguousNounConjunction" />
@@ -23,16 +23,5 @@
         <validator name="DuplicatedSection" />
         <validator name="VoidSection" />
         <validator name="SectionLevel" />
-
-        <validator name="InvalidSymbol" />
-        <validator name="ParenthesizedSentence">
-            <property name="max_count" value="3"/>
-            <property name="max_nesting_level" value="1"/>
-            <property name="max_length" value="10"/>
-        </validator>
-        <validator name="SpaceBetweenAlphabeticalWord" />
     </validators>
-    <symbols>
-         <symbol name="EXCLAMATION_MARK" value="!" invalid-chars="！" after-space="true" />
-    </symbols>
 </redpen-conf>
