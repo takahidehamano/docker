@@ -12,11 +12,9 @@
         <validator name="FrequentSentenceStart" />
         <validator name="JapaneseAmbiguousNounConjunction" />
         <validator name="JapaneseNumberExpression" />
-        <validator name="LongKanjiChain" />
         <validator name="SuccessiveSentence" />
         <validator name="DoubledConjunctiveParticleGa" />
 
-        <validator name="ParagraphStartWith" />
         <validator name="DuplicatedSection" />
         <validator name="WordFrequency" />
         <validator name="ParenthesizedSentence" />
