@@ -16,15 +16,11 @@
         <validator name="SuccessiveSentence" />
         <validator name="DoubledConjunctiveParticleGa" />
 
-        <validator name="SpaceBeginningOfSentence" />
         <validator name="ParagraphStartWith" />
-        <validator name="DoubledWord" />
         <validator name="DuplicatedSection" />
         <validator name="WordFrequency" />
         <validator name="ParenthesizedSentence" />
         <validator name="DoubledJoshi" />
-        <validator name="HankakuKana" />
-        <validator name="VoidSection" />
 
     </validators>
 </redpen-conf>
