@@ -20,7 +20,6 @@
         <validator name="DuplicatedSection" />
         <validator name="WordFrequency" />
         <validator name="ParenthesizedSentence" />
-        <validator name="DoubledJoshi" />
 
     </validators>
 </redpen-conf>
