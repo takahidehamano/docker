@@ -4,7 +4,6 @@
             <property name="max_len" value="100"/>
         </validator>
         <validator name="CommaNumber" />
-
         <validator name="SuccessiveWord" />
         <validator name="KatakanaSpellCheck"/>
         <validator name="InvalidExpression"/>
@@ -16,5 +15,16 @@
         <validator name="LongKanjiChain" />
         <validator name="SuccessiveSentence" />
         <validator name="DoubledConjunctiveParticleGa" />
+
+        <validator name="SpaceBeginningOfSentence" />
+        <validator name="ParagraphStartWith" />
+        <validator name="DoubledWord" />
+        <validator name="DuplicatedSection" />
+        <validator name="WordFrequency" />
+        <validator name="ParenthesizedSentence" />
+        <validator name="DoubledJoshi" />
+        <validator name="HankakuKana" />
+        <validator name="VoidSection" />
+
     </validators>
 </redpen-conf>
