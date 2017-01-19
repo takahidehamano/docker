@@ -2,7 +2,7 @@
 # Docker Hub https://registry.hub.docker.com/_/debian/
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: kemsakurai/redpen-utf-8
+box: takahidehamano/mynginx
 # You can also use services such as databases. Read more on our dev center:
 # http://devcenter.wercker.com/docs/services/index.html
 # services:
@@ -21,19 +21,8 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
-        name: echo start
-        code: |
-          echo "#################################"
-          echo "blog build start"
-          echo "#################################"
-    - script:
         name: check
         code: |
         
           redpen -c ./redpen-conf-ja.xml -f latex  draft.tex
-    - script:
-        name: echo end
-        code: |
-          echo "#################################"
-          echo "blog build end"
-          echo "#################################"
+
